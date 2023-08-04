@@ -258,7 +258,7 @@ p {
 }
 
 .core {
-    padding-top: 80px;
+    padding-top: 50px;
 }
 #current {
     animation: blink 2s;
