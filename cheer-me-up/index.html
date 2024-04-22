@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<!-- Made for fun by roshdy.dev -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  <style>
+	@import url(https://fonts.googleapis.com/css?family=Inconsolata:400,700);body,html{margin:0;padding:0;height:100%;background:#f8f6e3}.container{position:relative;width:100%;height:100%;overflow:hidden}.clap,button{position:absolute}.clap{font-size:40px;animation:2s linear infinite clapAnimation}@keyframes clapAnimation{0%{transform:translate(-50%,100%);opacity:0}50%{opacity:1}100%{transform:translate(-50%,-100%);opacity:0}}button::after,button::before{position:absolute;content:'';transition:.5s}button{cursor:pointer;display:inline-block;padding:20px 40px;color:#fff;top:50%;left:50%;transform:translate(-50%,-50%);vertical-align:middle;font-family:Inconsolata,Helvetica,Arial,sans-serif;text-decoration:none;font-size:4vw;transition:.5s;background-color:#3498db}button::before{bottom:-15px;height:15px;width:100%;left:8px;transform:skewX(45deg);background-color:#196090}button::after{right:-15px;height:100%;width:15px;bottom:-8px;transform:skewY(45deg);background-color:#124364}button:active{margin-left:10px;margin-top:10px}button:active::before{bottom:-5px;height:5px;left:3px}button:active::after{right:-5px;width:5px;bottom:-3px}span{cursor:wait}
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div id="clap-container"></div>
+    <button id="startButton">CHEER ME UP</button>
+  </div>
+</body>
+<script>
+console.log(`
+%cMade for fun by https://roshdy.dev`,"color:#0dd8d8; background:#0b1021; font-size:1.5rem; padding:0.15rem 0.25rem; margin: 1rem auto; font-family: Rockwell; border: 2px solid #0dd8d8; border-radius: 4px;font-weight: bold; text-shadow: 1px 1px 1px #00af87bf;");const clapContainer=document.getElementById("clap-container"),startButton=document.getElementById("startButton");function createClap(){let e=document.createElement("span"),t=["\uD83E\uDD73","\uD83D\uDC4F"],n=t[Math.floor(Math.random()*t.length)];e.textContent=n,e.classList.add("clap");let a=Math.random()*window.innerWidth;e.style.left=a+"px",clapContainer.appendChild(e);let o=0,r=setInterval(()=>{e.style.bottom=o+"px",(o+=2)>window.innerHeight&&(clearInterval(r),e.remove())},10)}startButton.addEventListener("click",()=>{let e=setInterval(createClap,100);setTimeout(()=>{clearInterval(e),clapContainer.innerHTML=""},14e3),new Promise(e=>{let t=new Audio("./cheers.mp3");t.play(),t.onended=e})});
+</script>
+</html>
