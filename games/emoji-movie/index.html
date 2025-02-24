@@ -11,6 +11,9 @@
         <h1 class="text-5xl font-bold text-gray-800 mb-4">Guess the Movie 🎬</h1>
         <p class="text-xl text-gray-600">Can you guess the movie from the emojis? Test your skills and have fun!</p>
     </div>
+    <div id="wrongGuess" class="hidden text-3xl font-bold mb-4 text-red-600 animate-shake">
+        Wrong guess! 😢 Try again!
+    </div>
     <div id="congrats" class="hidden text-3xl font-bold mb-4 text-green-600 animate-bounce">
         Congrats! 🎉
     </div>
@@ -132,6 +135,9 @@ const movies = [
         }
 
         const guess = (event) => {
+            document.getElementById('wrongGuess').classList.add('hidden');
+            document.getElementById('wrongGuess').classList.add('hidden');
+
             console.log(document.getElementById('guess').value.toLowerCase() , movieDetails.title.toLowerCase());
             if (document.getElementById('guess').value.toLowerCase() === movieDetails.title.toLowerCase()) {
             let currentScore = localStorage.getItem('score');
@@ -152,7 +158,8 @@ const movies = [
                 
             }
             else {
-                alert('Wrong!');
+                document.getElementById('wrongGuess').classList.remove('hidden');
+
             }
         }
 
@@ -171,6 +178,7 @@ const movies = [
 
         const getNext = () => {
             document.getElementById('congrats').classList.add('hidden');
+            document.getElementById('wrongGuess').classList.add('hidden');
             document.getElementById('alerts').innerHTML = '';
             setScore();
             document.getElementById('guess').value = '';
