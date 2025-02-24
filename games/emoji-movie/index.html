@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emoji Movie Game</title>
+</head>
+<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen p-4">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <div id="congrats" class="hidden text-3xl font-bold mb-4 text-green-600 animate-bounce">
+        Congrats! 🎉
+    </div>
+    <!-- Score -->
+    <div id="score" class="text-2xl font-bold mb-4 text-blue-600">Score: 0</div>
+
+    <!-- Emojis Display -->
+    <div id="emojis" class="text-4xl mb-6 p-4 bg-white rounded-lg shadow-md">Loading...</div>
+
+    <!-- Input and Buttons -->
+    <div class="flex flex-col space-y-4 w-full max-w-md">
+        <!-- Guess Input -->
+        <input id="guess" type="text" placeholder="Enter your guess..." 
+               class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+        <!-- Buttons -->
+        <div class="flex space-x-4">
+            <button id="hintBtn" onclick="getHint()" 
+                    class="flex-1 bg-yellow-500 text-white py-2 px-4 rounded-lg hover:bg-yellow-600 transition duration-200">
+                Hint!
+            </button>
+            <button onclick="guess()" 
+                    class="flex-1 bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200">
+                Guess!
+            </button>
+        </div>
+    </div>
+
+    <!-- Alert Message -->
+    <div id="alerts">
+
+    </div>
+   
+    <!-- Next Button -->
+    <button id="next" onclick="getNext()" hidden 
+            class="mt-6 bg-green-500 text-white py-2 px-6 rounded-lg hover:bg-green-600 transition duration-200">
+        Next one?
+    </button>
+    <script>
+const movies = [
+  { id: 1, title: "The Lion King", emojis: "🦁👑", year: 1994, genres: ["Animation", "Adventure", "Drama"] },
+  { id: 2, title: "Titanic", emojis: "🚢💔", year: 1997, genres: ["Romance", "Drama"] },
+  { id: 3, title: "Spider-Man", emojis: "🕷️🦸‍♂️", year: 2002, genres: ["Action", "Adventure"] },
+  { id: 4, title: "The Godfather", emojis: "👨‍👩‍👦🔫", year: 1972, genres: ["Crime", "Drama"] },
+  { id: 5, title: "Finding Nemo", emojis: "🐠🔍", year: 2003, genres: ["Animation", "Adventure", "Comedy"] },
+  { id: 6, title: "Jaws", emojis: "🦈🌊", year: 1975, genres: ["Thriller", "Horror"] },
+  { id: 7, title: "Frozen", emojis: "❄️👭", year: 2013, genres: ["Animation", "Musical"] },
+  { id: 8, title: "The Matrix", emojis: "💊🕶️", year: 1999, genres: ["Sci-Fi", "Action"] },
+  { id: 9, title: "Up", emojis: "🎈🏠", year: 2009, genres: ["Animation", "Adventure", "Drama"] },
+  { id: 10, title: "Avatar", emojis: "🌎👽", year: 2009, genres: ["Sci-Fi", "Adventure"] },
+  { id: 11, title: "Batman", emojis: "🦇🏙️", year: 1989, genres: ["Action", "Crime"] },
+  { id: 12, title: "Cinderella", emojis: "👠🎃", year: 1950, genres: ["Animation", "Fantasy", "Romance"] },
+  { id: 13, title: "The Wolf of Wall Street", emojis: "🐺💰📈", year: 2013, genres: ["Comedy", "Drama"] },
+  { id: 14, title: "Forrest Gump", emojis: "🏃🍫", year: 1994, genres: ["Drama", "Romance"] },
+  { id: 15, title: "Toy Story", emojis: "🤠🚀", year: 1995, genres: ["Animation", "Comedy"] },
+  { id: 16, title: "Ghostbusters", emojis: "👻🚫", year: 1984, genres: ["Comedy", "Fantasy"] },
+  { id: 17, title: "The Shining", emojis: "🏨🚪🔪", year: 1980, genres: ["Horror", "Thriller"] },
+  { id: 18, title: "The Avengers", emojis: "🦸‍♂️🦸‍♀️", year: 2012, genres: ["Action", "Sci-Fi"] },
+  { id: 19, title: "WALL-E", emojis: "🤖❤️", year: 2008, genres: ["Animation", "Sci-Fi"] },
+  { id: 20, title: "The Dark Knight", emojis: "🦇🤵‍♂️🎭", year: 2008, genres: ["Action", "Drama"] },
+  { id: 21, title: "Rocky", emojis: "🥊🇺🇸", year: 1976, genres: ["Drama", "Sport"] },
+  { id: 22, title: "The Incredibles", emojis: "🦸‍♂️🦸‍♀️", year: 2004, genres: ["Animation", "Action"] },
+  { id: 23, title: "The Grand Budapest Hotel", emojis: "🏨🔑", year: 2014, genres: ["Comedy", "Drama"] },
+  { id: 24, title: "The Silence of the Lambs", emojis: "👮‍♀️🦋🔪", year: 1991, genres: ["Thriller", "Crime"] },
+  { id: 25, title: "Zootopia", emojis: "🦊👮‍♀️", year: 2016, genres: ["Animation", "Adventure"] },
+  { id: 26, title: "Coco", emojis: "🎸💀", year: 2017, genres: ["Animation", "Musical"] },
+  { id: 27, title: "Back to the Future", emojis: "⏳🚗⚡", year: 1985, genres: ["Sci-Fi", "Comedy"] },
+  { id: 28, title: "Moana", emojis: "🌊🚣‍♀️", year: 2016, genres: ["Animation", "Adventure"] },
+  { id: 29, title: "Pirates of the Caribbean", emojis: "☠️⚓", year: 2003, genres: ["Adventure", "Fantasy"] },
+  { id: 30, title: "The Nightmare Before Christmas", emojis: "🎃🎄", year: 1993, genres: ["Animation", "Musical"] },
+  { id: 31, title: "The Hunger Games", emojis: "🏹🔥", year: 2012, genres: ["Action", "Sci-Fi"] },
+  { id: 32, title: "A Quiet Place", emojis: "🤫👂", year: 2018, genres: ["Horror", "Thriller"] },
+  { id: 33, title: "Doctor Strange", emojis: "🧙‍♂️🔮", year: 2016, genres: ["Action", "Fantasy"] },
+  { id: 34, title: "John Wick", emojis: "🔫🐶", year: 2014, genres: ["Action", "Thriller"] },
+  { id: 35, title: "Mad Max: Fury Road", emojis: "🚗🔥", year: 2015, genres: ["Action", "Sci-Fi"] },
+//   { id: 36, title: "Deadpool", emojis: "🤡🔫", year: 2016, genres: ["Action", "Comedy"] },
+  { id: 37, title: "Gladiator", emojis: "⚔️🏟️", year: 2000, genres: ["Action", "Drama"] },
+  { id: 38, title: "The Conjuring", emojis: "👻🏚️", year: 2013, genres: ["Horror", "Thriller"] },
+  { id: 39, title: "The Revenant", emojis: "🐻❄️", year: 2015, genres: ["Drama", "Adventure"] },
+  { id: 40, title: "Interstellar", emojis: "🚀🌌", year: 2014, genres: ["Sci-Fi", "Drama"] },
+  { id: 41, title: "Shrek", emojis: "👹🏰", year: 2001, genres: ["Animation", "Comedy"] },
+  { id: 42, title: "It", emojis: "🎈🤡", year: 2017, genres: ["Horror", "Thriller"] },
+  { id: 43, title: "The Lego Movie", emojis: "🧱😃", year: 2014, genres: ["Animation", "Comedy"] },
+//   { id: 44, title: "Sing", emojis: "🎤🐷", year: 2016, genres: ["Animation", "Musical"] },
+  { id: 45, title: "Dune", emojis: "🏜️🌌", year: 2021, genres: ["Sci-Fi", "Adventure"] },
+  { id: 46, title: "The Jungle Book", emojis: "🐻🐍🐅", year: 2016, genres: ["Adventure", "Family"] },
+  { id: 47, title: "The Truman Show", emojis: "📺🌎", year: 1998, genres: ["Drama", "Sci-Fi"] },
+  { id: 48, title: "Inception", emojis: "🌀💤", year: 2010, genres: ["Sci-Fi", "Thriller"] },
+  { id: 49, title: "The Social Network", emojis: "💻👥", year: 2010, genres: ["Drama", "Biography"] },
+  { id: 50, title: "Ratatouille", emojis: "🐭🍽️", year: 2007, genres: ["Animation", "Comedy"] },
+];
+        let movieDetails = {};
+
+        let hints = {};
+
+        let usedHints = [];
+
+        const getHint = () => {
+
+            if (usedHints.length === 4){
+                return true;
+                document.getElementById('next').hidden = false;
+            }
+
+            if (usedHints.length === 3){
+                addAlert('You used all the hints! it seems you are not a good guesser!');
+                usedHints.push('done');
+                document.getElementById('next').hidden = false;
+                return true;
+            }
+            Object.keys(hints).some(element => {
+                if (!usedHints.includes(element)) {
+                    addAlert(hints[element]);
+                    usedHints.push(element);
+                    console.log(usedHints, element);
+                    return true;
+                }
+            });
+        }
+
+        const guess = (event) => {
+            console.log(document.getElementById('guess').value.toLowerCase() , movieDetails.title.toLowerCase());
+            if (document.getElementById('guess').value.toLowerCase() === movieDetails.title.toLowerCase()) {
+            let currentScore = localStorage.getItem('score');
+            currentScore = currentScore ? parseInt(currentScore) : 0;
+            let newScore = currentScore + 10;
+            localStorage.setItem('score', newScore);
+            console.log(`Updated score for ${newScore}`);
+            document.getElementById('next').hidden = false;
+            console.log('AD:', movieDetails);
+            addSolved(movieDetails.id);
+            setScore();
+            document.getElementById('alerts').innerHTML = '';
+            document.getElementById('congrats').classList.remove('hidden');
+            // setTimeout(() => {
+            //     getNext();
+            
+            // }, 500)
+                
+            }
+            else {
+                alert('Wrong!');
+            }
+        }
+
+        const addSolved = (id) => {
+            let solved = localStorage.getItem('solved');
+            solved = solved ? JSON.parse(solved) : [];
+            solved.push(id);
+            localStorage.setItem('solved', JSON.stringify(solved));
+        }
+        
+        const setScore = () => {
+            let currentScore = localStorage.getItem('score');
+            currentScore = currentScore ? parseInt(currentScore) : 0;
+            document.getElementById('score').innerHTML = `Score: ${currentScore}`;
+        }
+
+        const getNext = () => {
+            document.getElementById('congrats').classList.add('hidden');
+            document.getElementById('alerts').innerHTML = '';
+            setScore();
+            document.getElementById('guess').value = '';
+            let solved = localStorage.getItem('solved');
+            solved = solved ? JSON.parse(solved) : [];
+            console.log(solved);
+            shuffleArray(movies).some(movie => {
+                if (!solved.includes(movie.id)) {
+
+                    movieDetails = {
+                        id: movie.id,
+                        title: movie.title,
+                        emoji: movie.emojis,
+                        year: movie.year,
+                        genres: movie.genres,
+                    };
+
+                    hints = {
+                        title: `The title has ${movieDetails.title.trim().split(/\s+/).filter(word => word.length > 0).length} Words!`,
+                        year: `The Movie released on ${movieDetails.year}`,
+                        genres: `The Movie genres are ${movieDetails.genres}`
+                    };
+
+                    usedHints = [];
+
+                    document.getElementById('next').hidden = true;
+                    document.getElementById('emojis').innerHTML = movieDetails.emoji;
+
+                    return true;
+                }
+            });
+        }
+
+        const shuffleArray = (array) => {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1)); // Get a random index
+                [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+            }
+            return array;
+        }
+
+        const addAlert = (msg) => {
+            document.getElementById('alerts').innerHTML += 
+            `<div id="alert" class="mt-4 text-lg font-semibold text-red-600 flex justify-center w-full">${msg}</div>`
+        }
+
+
+
+        getNext();
+
+    </script>
+</body>
+</html>
